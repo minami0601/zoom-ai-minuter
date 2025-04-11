@@ -1,0 +1,21 @@
+name = "zoom-ai-minuter"
+main = "dist/index.js"
+compatibility_date = "2023-10-02"
+node_compat = true
+
+[build]
+command = "pnpm run build"
+
+[vars]
+# 環境変数の設定（本番環境用）
+# ZOOM_WEBHOOK_SECRET = ""
+# GEMINI_API_KEY = ""
+# NOTION_API_KEY = ""
+
+[[kv_namespaces]]
+binding = "MEETING_DATA"
+id = ""
+preview_id = ""
+
+[triggers]
+crons = []
