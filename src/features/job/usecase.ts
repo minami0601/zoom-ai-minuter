@@ -77,6 +77,24 @@ export const getJob = asyncErrorHandler(
 );
 
 /**
+ * 生のジョブデータを取得する
+ * @param env Workers環境変数
+ * @param jobId ジョブID
+ * @returns 生のジョブデータ（存在しない場合はnull）
+ */
+export const getRawJobData = asyncErrorHandler(
+	async (
+		env: { JOB_KV: KVNamespace },
+		jobId: string
+	): Promise<JobData | null> => {
+		const jobStorage = createJobStorage(env.JOB_KV);
+
+		// KVストレージからジョブを取得
+		return await jobStorage.getJob<JobData>(jobId);
+	}
+);
+
+/**
  * ジョブデータを更新する
  * @param env Workers環境変数
  * @param jobId ジョブID
