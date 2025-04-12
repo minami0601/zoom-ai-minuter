@@ -16,11 +16,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hono/zod-validator": "^0.4.3",
     "@notionhq/client": "^2.3.0",
     "date-fns": "^4.1.0",
     "hono": "^4.7.6",
     "remeda": "^2.21.2",
-    "valibot": "^1.0.0"
+    "valibot": "^1.0.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
