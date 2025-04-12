@@ -2,7 +2,7 @@
  * Cloudflare Workers KV操作機能を提供します
  * @module KVStorageLib
  */
-import { asyncErrorHandler } from "../../utils/error";
+import { asyncErrorHandler } from '../../utils/error';
 
 /**
  * KVストレージ操作インターフェース
@@ -18,8 +18,8 @@ export interface KVStorage {
  * KV保存オプション
  */
 export interface KVPutOptions {
-  expirationTtl?: number;  // 秒単位のTTL
-  expiration?: number;     // Unix時間（秒）での有効期限
+  expirationTtl?: number; // 秒単位のTTL
+  expiration?: number; // Unix時間（秒）での有効期限
 }
 
 /**
@@ -41,12 +41,10 @@ export class WorkersKV implements KVStorage {
    * @param key キー
    * @returns 取得したデータ（無い場合はnull）
    */
-  get = asyncErrorHandler(
-    async <T>(key: string): Promise<T | null> => {
-      const value = await this.namespace.get(key, "json");
-      return value as T | null;
-    }
-  );
+  get = asyncErrorHandler(async <T>(key: string): Promise<T | null> => {
+    const value = await this.namespace.get(key, 'json');
+    return value as T | null;
+  });
 
   /**
    * KVストレージにデータを保存します
@@ -64,11 +62,9 @@ export class WorkersKV implements KVStorage {
    * KVストレージからデータを削除します
    * @param key キー
    */
-  delete = asyncErrorHandler(
-    async (key: string): Promise<void> => {
-      await this.namespace.delete(key);
-    }
-  );
+  delete = asyncErrorHandler(async (key: string): Promise<void> => {
+    await this.namespace.delete(key);
+  });
 
   /**
    * KVストレージのキー一覧を取得します
@@ -76,23 +72,19 @@ export class WorkersKV implements KVStorage {
    * @param limit 取得上限数
    * @returns キーのリスト
    */
-  list = asyncErrorHandler(
-    async (prefix?: string, limit: number = 100): Promise<string[]> => {
-      const result = await this.namespace.list({ prefix, limit });
-      return result.keys.map(k => k.name);
-    }
-  );
+  list = asyncErrorHandler(async (prefix?: string, limit = 100): Promise<string[]> => {
+    const result = await this.namespace.list({ prefix, limit });
+    return result.keys.map((k) => k.name);
+  });
 
   /**
    * 生のテキストデータを取得します（大きなデータ用）
    * @param key キー
    * @returns テキストデータ
    */
-  getText = asyncErrorHandler(
-    async (key: string): Promise<string | null> => {
-      return await this.namespace.get(key, "text");
-    }
-  );
+  getText = asyncErrorHandler(async (key: string): Promise<string | null> => {
+    return await this.namespace.get(key, 'text');
+  });
 
   /**
    * 生のテキストデータを保存します（大きなデータ用）
@@ -126,56 +118,46 @@ export class JobStorage {
    * @param jobId ジョブID
    * @param data ジョブデータ
    */
-  saveJob = asyncErrorHandler(
-    async <T>(jobId: string, data: T): Promise<void> => {
-      await this.kv.put(`job:${jobId}`, data);
-    }
-  );
+  saveJob = asyncErrorHandler(async <T>(jobId: string, data: T): Promise<void> => {
+    await this.kv.put(`job:${jobId}`, data);
+  });
 
   /**
    * ジョブデータを取得します
    * @param jobId ジョブID
    * @returns ジョブデータ
    */
-  getJob = asyncErrorHandler(
-    async <T>(jobId: string): Promise<T | null> => {
-      return await this.kv.get<T>(`job:${jobId}`);
-    }
-  );
+  getJob = asyncErrorHandler(async <T>(jobId: string): Promise<T | null> => {
+    return await this.kv.get<T>(`job:${jobId}`);
+  });
 
   /**
    * 文字起こしデータを保存します
    * @param jobId ジョブID
    * @param transcript 文字起こしデータ
    */
-  saveTranscript = asyncErrorHandler(
-    async (jobId: string, transcript: string): Promise<void> => {
-      await this.kv.putText(`transcript:${jobId}`, transcript);
-    }
-  );
+  saveTranscript = asyncErrorHandler(async (jobId: string, transcript: string): Promise<void> => {
+    await this.kv.putText(`transcript:${jobId}`, transcript);
+  });
 
   /**
    * 文字起こしデータを取得します
    * @param jobId ジョブID
    * @returns 文字起こしデータ
    */
-  getTranscript = asyncErrorHandler(
-    async (jobId: string): Promise<string | null> => {
-      return await this.kv.getText(`transcript:${jobId}`);
-    }
-  );
+  getTranscript = asyncErrorHandler(async (jobId: string): Promise<string | null> => {
+    return await this.kv.getText(`transcript:${jobId}`);
+  });
 
   /**
    * すべてのジョブIDを取得します
    * @param limit 取得上限数
    * @returns ジョブIDのリスト
    */
-  getAllJobIds = asyncErrorHandler(
-    async (limit: number = 100): Promise<string[]> => {
-      const keys = await this.kv.list("job:", limit);
-      return keys.map(key => key.replace("job:", ""));
-    }
-  );
+  getAllJobIds = asyncErrorHandler(async (limit = 100): Promise<string[]> => {
+    const keys = await this.kv.list('job:', limit);
+    return keys.map((key) => key.replace('job:', ''));
+  });
 
   /**
    * ジョブデータを更新します

@@ -65,11 +65,7 @@ export function uncapitalize(str: string): string {
  * @param currency 通貨コード（デフォルトは日本円）
  * @returns 通貨形式の文字列
  */
-export function formatCurrency(
-  value: number,
-  locale: string = 'ja-JP',
-  currency: string = 'JPY'
-): string {
+export function formatCurrency(value: number, locale = 'ja-JP', currency = 'JPY'): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
@@ -83,11 +79,7 @@ export function formatCurrency(
  * @param digits 小数点以下の桁数
  * @returns パーセント形式の文字列
  */
-export function formatPercent(
-  value: number,
-  locale: string = 'ja-JP',
-  digits: number = 0
-): string {
+export function formatPercent(value: number, locale = 'ja-JP', digits = 0): string {
   return new Intl.NumberFormat(locale, {
     style: 'percent',
     minimumFractionDigits: digits,
@@ -101,7 +93,7 @@ export function formatPercent(
  * @param locale ロケール（デフォルトは日本語）
  * @returns 区切り文字入りの数値文字列
  */
-export function formatNumber(value: number, locale: string = 'ja-JP'): string {
+export function formatNumber(value: number, locale = 'ja-JP'): string {
   return new Intl.NumberFormat(locale).format(value);
 }
 
@@ -112,7 +104,7 @@ export function formatNumber(value: number, locale: string = 'ja-JP'): string {
  * @param suffix 省略記号（デフォルトは...）
  * @returns 切り詰められた文字列
  */
-export function truncate(str: string, length: number, suffix: string = '...'): string {
+export function truncate(str: string, length: number, suffix = '...'): string {
   if (!str) return str;
   if (str.length <= length) return str;
   return str.substring(0, length - suffix.length) + suffix;
@@ -165,7 +157,7 @@ export function keysToSnakeCase<T = any>(obj: Record<string, any>): T {
  * @param char パディング文字（デフォルトは空白）
  * @returns パディングされた文字列
  */
-export function padLeft(str: string, length: number, char: string = ' '): string {
+export function padLeft(str: string, length: number, char = ' '): string {
   return str.padStart(length, char);
 }
 
@@ -176,6 +168,6 @@ export function padLeft(str: string, length: number, char: string = ' '): string
  * @param char パディング文字（デフォルトは空白）
  * @returns パディングされた文字列
  */
-export function padRight(str: string, length: number, char: string = ' '): string {
+export function padRight(str: string, length: number, char = ' '): string {
   return str.padEnd(length, char);
 }

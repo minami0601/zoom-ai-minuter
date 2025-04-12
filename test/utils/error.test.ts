@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
-  AppError,
-  ValidationError,
   APIError,
+  AppError,
   ErrorCode,
+  ValidationError,
+  asyncErrorHandler,
   handleError,
-  asyncErrorHandler
 } from '../../src/utils/error';
 
 describe('Error Utilities', () => {
@@ -37,7 +37,7 @@ describe('Error Utilities', () => {
         message: 'テストエラー',
         code: ErrorCode.NOT_FOUND,
         statusCode: 404,
-        details
+        details,
       });
     });
   });

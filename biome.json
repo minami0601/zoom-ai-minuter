@@ -7,9 +7,22 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
       "suspicious": {
         "noExplicitAny": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
       }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "es5",
+      "semicolons": "always"
     }
   },
   "formatter": {
@@ -18,11 +31,7 @@
     "indentWidth": 2,
     "lineWidth": 100
   },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "trailingComma": "es5",
-      "semicolons": "always"
-    }
+  "files": {
+    "ignore": ["node_modules", "dist", ".wrangler", "coverage"]
   }
 }

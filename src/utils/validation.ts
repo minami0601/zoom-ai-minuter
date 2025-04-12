@@ -40,17 +40,14 @@ export function validateRequired<T>(value: T, fieldName: string): void {
  * @param fieldName フィールド名（エラーメッセージ用）
  * @throws {ValidationError} 文字列の長さが範囲外の場合
  */
-export function validateLength(
-  value: string,
-  min: number,
-  max: number,
-  fieldName: string
-): void {
+export function validateLength(value: string, min: number, max: number, fieldName: string): void {
   if (value.length < min || value.length > max) {
-    throw new ValidationError(
-      `${fieldName}は${min}文字以上${max}文字以下である必要があります`,
-      { field: fieldName, min, max, actual: value.length }
-    );
+    throw new ValidationError(`${fieldName}は${min}文字以上${max}文字以下である必要があります`, {
+      field: fieldName,
+      min,
+      max,
+      actual: value.length,
+    });
   }
 }
 
@@ -93,10 +90,12 @@ export function validateNumberRange(
   fieldName: string
 ): void {
   if (value < min || value > max) {
-    throw new ValidationError(
-      `${fieldName}は${min}から${max}までの範囲である必要があります`,
-      { field: fieldName, min, max, actual: value }
-    );
+    throw new ValidationError(`${fieldName}は${min}から${max}までの範囲である必要があります`, {
+      field: fieldName,
+      min,
+      max,
+      actual: value,
+    });
   }
 }
 
@@ -117,7 +116,7 @@ export function validate<T>(value: T, rules: ValidationRule<T>[]): ValidationRes
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 

@@ -2,13 +2,13 @@
  * Zoom Webhook処理に関連するドメインモデルと型定義
  * @module WebhookDomain
  */
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * サポートするZoom Webhookイベントタイプ
  */
 export enum ZoomEventType {
-  RECORDING_TRANSCRIPT_COMPLETED = "recording.transcript_completed",
+  RECORDING_TRANSCRIPT_COMPLETED = 'recording.transcript_completed',
 }
 
 /**
@@ -71,23 +71,25 @@ export const zoomWebhookSchema = z.object({
   payload: z.object({
     object: z.object({
       uuid: z.string(),
-      id: z.string().or(z.number().transform(n => String(n))),
+      id: z.string().or(z.number().transform((n) => String(n))),
       topic: z.string(),
       host_id: z.string(),
       start_time: z.string(),
       duration: z.number(),
-      recording_files: z.array(
-        z.object({
-          id: z.string(),
-          file_type: z.string(),
-          recording_type: z.string(),
-          download_url: z.string(),
-          status: z.string(),
-          recording_start: z.string(),
-          recording_end: z.string(),
-          file_name: z.string().optional(),
-        })
-      ).optional(),
+      recording_files: z
+        .array(
+          z.object({
+            id: z.string(),
+            file_type: z.string(),
+            recording_type: z.string(),
+            download_url: z.string(),
+            status: z.string(),
+            recording_start: z.string(),
+            recording_end: z.string(),
+            file_name: z.string().optional(),
+          })
+        )
+        .optional(),
     }),
   }),
   download_token: z.string(),
@@ -100,9 +102,9 @@ export const zoomWebhookSchema = z.object({
  * @returns 文字起こしファイルがあればtrue
  */
 export function hasTranscriptFile(payload: ZoomWebhookPayload): boolean {
-  return payload.payload.object.recording_files?.some(
-    file => file.file_type === "TRANSCRIPT"
-  ) ?? false;
+  return (
+    payload.payload.object.recording_files?.some((file) => file.file_type === 'TRANSCRIPT') ?? false
+  );
 }
 
 /**
@@ -111,10 +113,7 @@ export function hasTranscriptFile(payload: ZoomWebhookPayload): boolean {
  * @param payload Webhookペイロード
  * @returns 指定されたイベントタイプであればtrue
  */
-export function isEventType(
-  eventType: ZoomEventType,
-  payload: ZoomWebhookPayload
-): boolean {
+export function isEventType(eventType: ZoomEventType, payload: ZoomWebhookPayload): boolean {
   return payload.event === eventType;
 }
 
@@ -125,7 +124,6 @@ export function isEventType(
  */
 export function isTranscriptCompletedEvent(payload: ZoomWebhookPayload): boolean {
   return (
-    isEventType(ZoomEventType.RECORDING_TRANSCRIPT_COMPLETED, payload) &&
-    hasTranscriptFile(payload)
+    isEventType(ZoomEventType.RECORDING_TRANSCRIPT_COMPLETED, payload) && hasTranscriptFile(payload)
   );
 }

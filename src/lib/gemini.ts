@@ -2,7 +2,7 @@
  * Google Gemini API連携機能を提供します
  * @module GeminiLib
  */
-import { asyncErrorHandler } from "../utils/error";
+import { asyncErrorHandler } from '../utils/error';
 
 /**
  * Gemini API設定インターフェース
@@ -73,9 +73,9 @@ export class GeminiClient {
       const apiUrl = `${this.config.baseUrl}/models/${this.config.modelName}:generateContent?key=${this.config.apiKey}`;
 
       const response = await fetch(apiUrl, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           contents: [
@@ -100,11 +100,11 @@ export class GeminiClient {
         throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json() as GeminiResponse;
+      const data = (await response.json()) as GeminiResponse;
 
       // レスポンスからテキスト部分を抽出
       if (!data.candidates || data.candidates.length === 0) {
-        throw new Error("No response from Gemini API");
+        throw new Error('No response from Gemini API');
       }
 
       return data.candidates[0].content.parts[0].text;
@@ -118,7 +118,10 @@ export class GeminiClient {
    * @returns 生成されたJSONオブジェクト
    */
   generateJson = asyncErrorHandler(
-    async <T extends Record<string, any>>(prompt: string, options?: GeminiRequestOptions): Promise<T> => {
+    async <T extends Record<string, any>>(
+      prompt: string,
+      options?: GeminiRequestOptions
+    ): Promise<T> => {
       const jsonText = await this.generateText(prompt, {
         ...options,
         temperature: 0.1, // JSONの生成には低い温度を使用
@@ -137,9 +140,9 @@ export class GeminiClient {
           return JSON.parse(jsonText) as T;
         }
       } catch (error) {
-        console.error("JSON parsing error:", error);
-        console.error("Raw text:", jsonText);
-        throw new Error("Failed to parse JSON from Gemini response");
+        console.error('JSON parsing error:', error);
+        console.error('Raw text:', jsonText);
+        throw new Error('Failed to parse JSON from Gemini response');
       }
     }
   );
@@ -161,7 +164,7 @@ export class GeminiClient {
 ${instructions}
 
 カテゴリー:
-${categories.map(cat => `- ${cat}`).join("\n")}
+${categories.map((cat) => `- ${cat}`).join('\n')}
 
 以下のテキストを上記カテゴリーのいずれかに分類し、理由も示してください。
 回答は必ずJSON形式で返してください。
@@ -184,8 +187,8 @@ ${text}
   summarizeText = asyncErrorHandler(
     async (
       text: string,
-      maxLength: number = 1000,
-      instructions: string = "以下のテキストを簡潔に要約してください。"
+      maxLength = 1000,
+      instructions = '以下のテキストを簡潔に要約してください。'
     ): Promise<string> => {
       const prompt = `
 ${instructions}
@@ -211,7 +214,7 @@ export function createGeminiClient(env: {
 }): GeminiClient {
   return new GeminiClient({
     apiKey: env.GEMINI_API_KEY,
-    baseUrl: "https://generativelanguage.googleapis.com/v1beta",
-    modelName: env.GEMINI_MODEL_NAME || "gemini-1.5-pro",
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+    modelName: env.GEMINI_MODEL_NAME || 'gemini-1.5-pro',
   });
 }
