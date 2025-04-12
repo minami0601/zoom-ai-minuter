@@ -24,7 +24,7 @@ app.get("/:jobId", async (c) => {
   const job = await getJob(env, jobId);
 
   if (!job) {
-    return c.json({ error: "Job not found" }, 404);
+    return c.json({ error: "ジョブが見つかりません" }, 404);
   }
 
   return c.json(job);
@@ -67,7 +67,7 @@ app.patch(
     const updatedJob = await updateJob(env, jobId, updateData);
 
     if (!updatedJob) {
-      return c.json({ error: "Job not found" }, 404);
+      return c.json({ error: "ジョブが見つかりません" }, 404);
     }
 
     return c.json(updatedJob);
