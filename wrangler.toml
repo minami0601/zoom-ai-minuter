@@ -1,21 +1,26 @@
 name = "zoom-ai-minuter"
-main = "dist/index.js"
-compatibility_date = "2023-10-02"
-node_compat = true
+main = "src/index.ts"
+compatibility_date = "2023-09-04"
 
-[build]
-command = "pnpm run build"
-
+# ローカル開発時の環境変数読み込み設定
 [vars]
-# 環境変数の設定（本番環境用）
-# ZOOM_WEBHOOK_SECRET = ""
-# GEMINI_API_KEY = ""
-# NOTION_API_KEY = ""
+APP_ENV = "development"
 
+# KVストレージ名前空間の設定
 [[kv_namespaces]]
-binding = "MEETING_DATA"
-id = ""
-preview_id = ""
+binding = "JOB_KV"
+id = "xxxxxxxx" # このIDはCloudflare KV作成時に取得する値
+preview_id = "yyyyyyyy" # ローカル開発用のID
 
-[triggers]
-crons = []
+# 開発環境設定
+[env.development]
+workers_dev = true
+# 開発環境では .env ファイルから環境変数を読み込む
+
+# 本番環境設定
+[env.production]
+workers_dev = false
+# 本番環境ではCloudflare Secretsを使用
+# zone_id と routes は実際のドメイン設定に合わせて変更する
+zone_id = "your_zone_id"
+routes = ["example.com/api/*"]

@@ -1,1 +1,40 @@
-node_modules
+# ビルド出力
+dist/
+build/
+.wrangler/
+
+# 依存関係
+node_modules/
+
+# 環境変数ファイル（機密情報）
+.env
+.dev.vars
+
+# エディタ設定
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# ログファイル
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# キャッシュディレクトリ
+.cache/
+.parcel-cache/
+
+# テストカバレッジ
+coverage/
+
+# その他
+.turbo
+.vercel
+.env*.local
