@@ -2,17 +2,17 @@
  * Zoom Webhook処理のユースケース
  * @module WebhookUsecase
  */
-import { createZoomClient } from "../../lib/zoom";
-import { createJob } from "../job/usecase";
-import { asyncErrorHandler } from "../../utils/error";
-import { CreateJobRequest } from "../job/domain";
+import { createZoomClient } from '../../lib/zoom';
+import { asyncErrorHandler } from '../../utils/error';
+import type { CreateJobRequest } from '../job/domain';
+import { createJob } from '../job/usecase';
 import {
-  WebhookVerificationRequest,
-  WebhookProcessingResponse,
-  ZoomWebhookPayload,
+  type WebhookProcessingResponse,
+  type WebhookVerificationRequest,
+  type ZoomWebhookPayload,
   isTranscriptCompletedEvent,
   zoomWebhookSchema,
-} from "./domain";
+} from './domain';
 
 /**
  * Zoom Webhookの署名を検証する
@@ -26,11 +26,7 @@ export const verifyWebhookSignature = asyncErrorHandler(
     req: WebhookVerificationRequest
   ): Promise<boolean> => {
     const zoomClient = createZoomClient(env);
-    return await zoomClient.verifyWebhook(
-      req.signature,
-      req.timestamp,
-      req.payload
-    );
+    return await zoomClient.verifyWebhook(req.signature, req.timestamp, req.payload);
   }
 );
 
@@ -61,7 +57,7 @@ export const processWebhookEvent = asyncErrorHandler(
     if (!isTranscriptCompletedEvent(payload)) {
       return {
         success: true,
-        message: "イベントタイプが処理対象外のため無視しました",
+        message: 'イベントタイプが処理対象外のため無視しました',
       };
     }
 
@@ -79,7 +75,7 @@ export const processWebhookEvent = asyncErrorHandler(
     // 成功レスポンス
     return {
       success: true,
-      message: "Webhook正常に処理され、ジョブが作成されました",
+      message: 'Webhook正常に処理され、ジョブが作成されました',
       jobId,
     };
   }
@@ -94,7 +90,12 @@ export const processWebhookEvent = asyncErrorHandler(
  */
 export const handleZoomWebhook = asyncErrorHandler(
   async (
-    env: { ZOOM_API_KEY: string; ZOOM_API_SECRET: string; ZOOM_VERIFICATION_TOKEN: string; JOB_KV: KVNamespace },
+    env: {
+      ZOOM_API_KEY: string;
+      ZOOM_API_SECRET: string;
+      ZOOM_VERIFICATION_TOKEN: string;
+      JOB_KV: KVNamespace;
+    },
     verificationReq: WebhookVerificationRequest,
     payloadText: string
   ): Promise<WebhookProcessingResponse> => {
@@ -103,7 +104,7 @@ export const handleZoomWebhook = asyncErrorHandler(
     if (!isValid) {
       return {
         success: false,
-        message: "Webhook署名の検証に失敗しました",
+        message: 'Webhook署名の検証に失敗しました',
       };
     }
 

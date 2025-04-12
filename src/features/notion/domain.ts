@@ -2,16 +2,16 @@
  * Notion連携のドメインモデルと型定義
  * @module NotionDomain
  */
-import { MeetingCategory } from '../classification/domain';
-import { MinutesData } from '../summarization/domain';
+import type { MeetingCategory } from '../classification/domain';
+import type { MinutesData } from '../summarization/domain';
 
 /**
  * Notion出力設定インターフェース
  */
 export interface NotionOutputConfig {
   databaseId: string;
-  iconEmoji?: string;  // デフォルトのアイコン絵文字
-  addTableOfContents?: boolean;  // 目次を追加するかどうか
+  iconEmoji?: string; // デフォルトのアイコン絵文字
+  addTableOfContents?: boolean; // 目次を追加するかどうか
 }
 
 /**
@@ -80,16 +80,20 @@ export function mapMinutesToNotionProperties(
   };
 
   // 決定事項のテキスト化
-  const decisionsText = minutes.globalSummary.decisions.length > 0
-    ? minutes.globalSummary.decisions.join('\n')
-    : '特に決定事項はありませんでした';
+  const decisionsText =
+    minutes.globalSummary.decisions.length > 0
+      ? minutes.globalSummary.decisions.join('\n')
+      : '特に決定事項はありませんでした';
 
   // アクションアイテムのテキスト化
-  const actionItemsText = minutes.globalSummary.actionItems.length > 0
-    ? minutes.globalSummary.actionItems
-        .map(item => `- ${item.task} (担当: ${item.assignee || '未定'}, 優先度: ${item.priority})`)
-        .join('\n')
-    : '特にアクションアイテムはありませんでした';
+  const actionItemsText =
+    minutes.globalSummary.actionItems.length > 0
+      ? minutes.globalSummary.actionItems
+          .map(
+            (item) => `- ${item.task} (担当: ${item.assignee || '未定'}, 優先度: ${item.priority})`
+          )
+          .join('\n')
+      : '特にアクションアイテムはありませんでした';
 
   // カテゴリに対応する絵文字を取得
   const categoryEmoji = opts.categoryEmojis[minutes.meetingCategory] || '';
@@ -123,7 +127,7 @@ export function mapMinutesToNotionProperties(
       number: minutes.meetingDuration,
     },
     // 参加者数プロパティ
-    "Participant Count": {
+    'Participant Count': {
       number: minutes.participantCount,
     },
     // 参加者プロパティ
@@ -157,7 +161,7 @@ export function mapMinutesToNotionProperties(
       ],
     },
     // アクションアイテムプロパティ
-    "Action Items": {
+    'Action Items': {
       rich_text: [
         {
           text: {
@@ -167,7 +171,7 @@ export function mapMinutesToNotionProperties(
       ],
     },
     // Zoom会議IDプロパティ
-    "Zoom Meeting ID": {
+    'Zoom Meeting ID': {
       rich_text: [
         {
           text: {

@@ -8,9 +8,9 @@
  */
 export enum MeetingCategory {
   INTERNAL_MEETING = 'internalMeeting', // 業務ミーティング
-  SMALL_TALK = 'smallTalk',           // 雑談
-  PRIVATE = 'private',               // プライベート
-  OTHER = 'other',                   // その他
+  SMALL_TALK = 'smallTalk', // 雑談
+  PRIVATE = 'private', // プライベート
+  OTHER = 'other', // その他
 }
 
 /**
@@ -35,9 +35,9 @@ export interface ClassifyMeetingRequest {
  * 会議テキスト分類オプション
  */
 export interface ClassificationOptions {
-  maxTextLength?: number;  // 分類に使用するテキストの最大長
-  sampleMethod?: 'start' | 'middle' | 'end' | 'random' | 'all';  // テキストサンプリング方法
-  minConfidence?: number;  // 分類信頼度の最小値
+  maxTextLength?: number; // 分類に使用するテキストの最大長
+  sampleMethod?: 'start' | 'middle' | 'end' | 'random' | 'all'; // テキストサンプリング方法
+  minConfidence?: number; // 分類信頼度の最小値
 }
 
 /**

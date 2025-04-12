@@ -2,8 +2,8 @@
  * Notion API連携機能を提供します
  * @module NotionLib
  */
-import { Client as NotionClient } from "@notionhq/client";
-import { asyncErrorHandler } from "../utils/error";
+import { Client as NotionClient } from '@notionhq/client';
+import { asyncErrorHandler } from '../utils/error';
 
 /**
  * Notion API設定インターフェース
@@ -54,41 +54,39 @@ export class NotionService {
    * @param options ページ作成オプション
    * @returns 作成されたページID
    */
-  createPage = asyncErrorHandler(
-    async (options: CreatePageOptions): Promise<string> => {
-      const { properties, content, iconEmoji } = options;
+  createPage = asyncErrorHandler(async (options: CreatePageOptions): Promise<string> => {
+    const { properties, content, iconEmoji } = options;
 
-      // ページ作成パラメータを構築
-      const createParams: any = {
-        parent: {
-          database_id: this.config.databaseId,
-        },
-        properties: properties,
+    // ページ作成パラメータを構築
+    const createParams: any = {
+      parent: {
+        database_id: this.config.databaseId,
+      },
+      properties: properties,
+    };
+
+    // アイコンの追加（指定されている場合）
+    if (iconEmoji) {
+      createParams.icon = {
+        type: 'emoji',
+        emoji: iconEmoji,
       };
-
-      // アイコンの追加（指定されている場合）
-      if (iconEmoji) {
-        createParams.icon = {
-          type: "emoji",
-          emoji: iconEmoji,
-        };
-      }
-
-      try {
-        // Notionクライアントを使用してページを作成
-        const response = await this.client.pages.create(createParams);
-
-        // コンテンツを追加
-        if (content) {
-          await this.appendContentToPage(response.id, content);
-        }
-
-        return response.id;
-      } catch (error: any) {
-        throw new Error(`Notionページ作成エラー: ${error.message}`);
-      }
     }
-  );
+
+    try {
+      // Notionクライアントを使用してページを作成
+      const response = await this.client.pages.create(createParams);
+
+      // コンテンツを追加
+      if (content) {
+        await this.appendContentToPage(response.id, content);
+      }
+
+      return response.id;
+    } catch (error: any) {
+      throw new Error(`Notionページ作成エラー: ${error.message}`);
+    }
+  });
 
   /**
    * Notionページを更新します
@@ -112,7 +110,7 @@ export class NotionService {
 
           if (iconEmoji) {
             updateParams.icon = {
-              type: "emoji",
+              type: 'emoji',
               emoji: iconEmoji,
             };
           }
@@ -174,12 +172,12 @@ export class NotionService {
     // 簡易実装: マークダウンブロックとして追加
     return [
       {
-        object: "block",
-        type: "paragraph",
+        object: 'block',
+        type: 'paragraph',
         paragraph: {
           rich_text: [
             {
-              type: "text",
+              type: 'text',
               text: {
                 content: markdown,
               },

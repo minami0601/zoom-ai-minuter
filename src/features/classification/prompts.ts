@@ -2,7 +2,7 @@
  * 会議分類用のGemini AIプロンプトテンプレート
  * @module ClassificationPrompts
  */
-import { ClassificationOptions } from './domain';
+import type { ClassificationOptions } from './domain';
 
 /**
  * テキストサンプルを準備する

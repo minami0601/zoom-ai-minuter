@@ -7,10 +7,10 @@
  * VTTファイルの文字起こしエントリ
  */
 export interface TranscriptEntry {
-  startTime: string;     // 開始時間 (HH:MM:SS.mmm)
-  endTime: string;       // 終了時間 (HH:MM:SS.mmm)
-  speaker?: string;      // 話者名（存在する場合）
-  text: string;          // 発言内容
+  startTime: string; // 開始時間 (HH:MM:SS.mmm)
+  endTime: string; // 終了時間 (HH:MM:SS.mmm)
+  speaker?: string; // 話者名（存在する場合）
+  text: string; // 発言内容
 }
 
 /**
@@ -19,7 +19,7 @@ export interface TranscriptEntry {
 export interface StructuredTranscript {
   metadata: TranscriptMetadata;
   entries: TranscriptEntry[];
-  rawText: string;      // 全テキストを結合した生データ
+  rawText: string; // 全テキストを結合した生データ
 }
 
 /**
@@ -56,7 +56,7 @@ export interface ProcessTranscriptResult {
  * VTTファイルの解析オプション
  */
 export interface VttParseOptions {
-  extractSpeakers?: boolean;  // 話者名を抽出するかどうか
-  combineLines?: boolean;     // 同一話者の連続した発言を結合するかどうか
-  removeFiller?: boolean;     // フィラーワードを除去するかどうか
+  extractSpeakers?: boolean; // 話者名を抽出するかどうか
+  combineLines?: boolean; // 同一話者の連続した発言を結合するかどうか
+  removeFiller?: boolean; // フィラーワードを除去するかどうか
 }

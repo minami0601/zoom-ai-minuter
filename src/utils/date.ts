@@ -3,22 +3,22 @@
  * @module DateUtils
  */
 import {
-  format,
-  parse,
-  isValid,
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
   addDays,
   addMonths,
   addYears,
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  endOfDay,
+  endOfMonth,
+  format,
   isAfter,
   isBefore,
   isEqual,
+  isValid,
+  parse,
   startOfDay,
-  endOfDay,
   startOfMonth,
-  endOfMonth
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
@@ -125,8 +125,10 @@ export function addMonthsToDate(date: Date, months: number): Date {
  * @returns 範囲内であればtrue
  */
 export function isDateInRange(date: Date, startDate: Date, endDate: Date): boolean {
-  return (isAfter(date, startDate) || isEqual(date, startDate)) &&
-         (isBefore(date, endDate) || isEqual(date, endDate));
+  return (
+    (isAfter(date, startDate) || isEqual(date, startDate)) &&
+    (isBefore(date, endDate) || isEqual(date, endDate))
+  );
 }
 
 /**

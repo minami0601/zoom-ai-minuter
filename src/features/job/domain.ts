@@ -7,11 +7,11 @@
  * ジョブステータス種別
  */
 export enum JobStatus {
-  PENDING = 'pending',     // 処理待ち
+  PENDING = 'pending', // 処理待ち
   PROCESSING = 'processing', // 処理中
-  COMPLETED = 'completed',   // 完了
-  FAILED = 'failed',       // 失敗
-  SKIPPED = 'skipped',     // スキップ（処理対象外）
+  COMPLETED = 'completed', // 完了
+  FAILED = 'failed', // 失敗
+  SKIPPED = 'skipped', // スキップ（処理対象外）
 }
 
 /**
@@ -19,9 +19,9 @@ export enum JobStatus {
  */
 export enum MeetingCategory {
   INTERNAL_MEETING = 'internalMeeting', // 業務ミーティング
-  SMALL_TALK = 'smallTalk',           // 雑談
-  PRIVATE = 'private',               // プライベート
-  OTHER = 'other',                   // その他
+  SMALL_TALK = 'smallTalk', // 雑談
+  PRIVATE = 'private', // プライベート
+  OTHER = 'other', // その他
 }
 
 /**
@@ -126,8 +126,8 @@ export interface UpdateJobRequest {
   notionPageId?: string;
   notionPageUrl?: string;
   error?: string;
-  processingStartedAt?: string;  // これを追加
-  completedAt?: string;         // これを追加
+  processingStartedAt?: string; // これを追加
+  completedAt?: string; // これを追加
 }
 
 /**

@@ -2,7 +2,7 @@
  * 要約生成用のAIプロンプトテンプレート
  * @module SummarizationPrompts
  */
-import { SummarizationOptions, TextChunk } from './domain';
+import type { SummarizationOptions, TextChunk } from './domain';
 
 /**
  * 全体要約プロンプトを生成
@@ -84,9 +84,10 @@ export const generateTopicAnalysisPrompt = (
   const includeSpeakers = options?.includeSpeakers !== false;
   const language = options?.language || 'ja';
 
-  const langPrompt = language === 'ja'
-    ? 'すべての出力を日本語で行ってください。'
-    : 'Please provide all output in English.';
+  const langPrompt =
+    language === 'ja'
+      ? 'すべての出力を日本語で行ってください。'
+      : 'Please provide all output in English.';
 
   return `
 あなたは会議の文字起こしデータから議論のトピックを特定し、タイムライン形式で要約する専門AIです。
@@ -280,7 +281,7 @@ export const generateMinutesIntegrationPrompt = (
 - タイトル: ${meetingData.title}
 - 日時: ${meetingData.date}
 - 所要時間: ${meetingData.duration}分
-- 参加者: ${meetingData.participants.join(", ")}
+- 参加者: ${meetingData.participants.join(', ')}
 
 ## 全体要約
 ${globalSummary}

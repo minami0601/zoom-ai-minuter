@@ -33,7 +33,7 @@ export class AppError extends Error {
   constructor(
     message: string,
     code: ErrorCode = ErrorCode.INTERNAL_ERROR,
-    statusCode: number = 500,
+    statusCode = 500,
     details?: Record<string, any>
   ) {
     super(message);
@@ -87,7 +87,7 @@ export class APIError extends AppError {
    * @param statusCode HTTPステータスコード
    * @param details APIエラーの詳細
    */
-  constructor(message: string, statusCode: number = 500, details?: Record<string, any>) {
+  constructor(message: string, statusCode = 500, details?: Record<string, any>) {
     super(message, ErrorCode.API_ERROR, statusCode, details);
     this.name = 'APIError';
 
@@ -110,9 +110,7 @@ export const handleError = (error: unknown): AppError => {
     return new AppError(error.message);
   }
 
-  return new AppError(
-    typeof error === 'string' ? error : '不明なエラーが発生しました'
-  );
+  return new AppError(typeof error === 'string' ? error : '不明なエラーが発生しました');
 };
 
 /**
@@ -120,9 +118,7 @@ export const handleError = (error: unknown): AppError => {
  * @param fn 非同期関数
  * @returns エラーをハンドルする非同期関数
  */
-export const asyncErrorHandler = <T, A extends any[]>(
-  fn: (...args: A) => Promise<T>
-) => {
+export const asyncErrorHandler = <T, A extends any[]>(fn: (...args: A) => Promise<T>) => {
   return async (...args: A): Promise<T> => {
     try {
       return await fn(...args);

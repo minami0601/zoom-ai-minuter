@@ -3,17 +3,17 @@
  * @module TranscriptUsecase
  */
 import { createZoomClient } from '../../lib/zoom';
-import { parseVttTranscript } from './format';
 import { asyncErrorHandler } from '../../utils/error';
-import { JobData, JobStatus } from '../job/domain';
-import { getJob, saveTranscript, updateJobStatus, getRawJobData } from '../job/usecase';
-import {
+import { type JobData, JobStatus } from '../job/domain';
+import { getJob, getRawJobData, saveTranscript, updateJobStatus } from '../job/usecase';
+import type {
   ProcessTranscriptRequest,
   ProcessTranscriptResult,
   StructuredTranscript,
   TranscriptMetadata,
-  VttParseOptions
+  VttParseOptions,
 } from './domain';
+import { parseVttTranscript } from './format';
 
 /**
  * VTT文字起こしファイルをダウンロードして処理する
@@ -23,7 +23,12 @@ import {
  */
 export const processTranscript = asyncErrorHandler(
   async (
-    env: { ZOOM_API_KEY: string; ZOOM_API_SECRET: string; ZOOM_VERIFICATION_TOKEN: string; JOB_KV: KVNamespace },
+    env: {
+      ZOOM_API_KEY: string;
+      ZOOM_API_SECRET: string;
+      ZOOM_VERIFICATION_TOKEN: string;
+      JOB_KV: KVNamespace;
+    },
     jobId: string
   ): Promise<ProcessTranscriptResult> => {
     const startTime = Date.now();
@@ -46,7 +51,9 @@ export const processTranscript = asyncErrorHandler(
       const meetingUUID = jobData.payload.object.uuid;
       const downloadToken = jobData.downloadToken;
 
-      console.log(`ジョブ ${jobId}: 文字起こしファイルの情報を取得します - 会議UUID: ${meetingUUID}`);
+      console.log(
+        `ジョブ ${jobId}: 文字起こしファイルの情報を取得します - 会議UUID: ${meetingUUID}`
+      );
 
       // 文字起こしファイルの情報を取得
       const transcriptFileInfo = await zoomClient.getTranscriptFileInfo(meetingUUID, downloadToken);
@@ -55,12 +62,19 @@ export const processTranscript = asyncErrorHandler(
         throw new Error(`会議 ${meetingUUID} の文字起こしファイルが見つかりません`);
       }
 
-      console.log(`ジョブ ${jobId}: 文字起こしファイルをダウンロードします - URL: ${transcriptFileInfo.downloadUrl}`);
+      console.log(
+        `ジョブ ${jobId}: 文字起こしファイルをダウンロードします - URL: ${transcriptFileInfo.downloadUrl}`
+      );
 
       // 文字起こしファイルをダウンロード
-      const vttContent = await zoomClient.downloadTranscript(transcriptFileInfo.downloadUrl, downloadToken);
+      const vttContent = await zoomClient.downloadTranscript(
+        transcriptFileInfo.downloadUrl,
+        downloadToken
+      );
 
-      console.log(`ジョブ ${jobId}: 文字起こしファイルをパースします - サイズ: ${vttContent.length} バイト`);
+      console.log(
+        `ジョブ ${jobId}: 文字起こしファイルをパースします - サイズ: ${vttContent.length} バイト`
+      );
 
       // メタデータを作成
       const metadata: TranscriptMetadata = {
@@ -80,13 +94,17 @@ export const processTranscript = asyncErrorHandler(
       // VTTを構造化データに変換
       const structuredTranscript = await parseVttTranscript(vttContent, metadata, parseOptions);
 
-      console.log(`ジョブ ${jobId}: 文字起こしデータを構造化しました - エントリ数: ${structuredTranscript.entries.length}`);
+      console.log(
+        `ジョブ ${jobId}: 文字起こしデータを構造化しました - エントリ数: ${structuredTranscript.entries.length}`
+      );
 
       // 構造化データをKVストレージに保存
       await saveTranscript(env, jobId, JSON.stringify(structuredTranscript));
 
       const processingTimeMs = Date.now() - startTime;
-      console.log(`ジョブ ${jobId}: 文字起こし処理が完了しました - 処理時間: ${processingTimeMs}ms`);
+      console.log(
+        `ジョブ ${jobId}: 文字起こし処理が完了しました - 処理時間: ${processingTimeMs}ms`
+      );
 
       // 処理成功
       await updateJobStatus(env, jobId, JobStatus.COMPLETED);
@@ -97,7 +115,6 @@ export const processTranscript = asyncErrorHandler(
         transcript: structuredTranscript,
         processingTimeMs,
       };
-
     } catch (error) {
       console.error(`ジョブ ${jobId}: 文字起こし処理中にエラーが発生しました`, error);
 
@@ -125,7 +142,12 @@ export const processTranscript = asyncErrorHandler(
  */
 export const startTranscriptProcessing = asyncErrorHandler(
   async (
-    env: { ZOOM_API_KEY: string; ZOOM_API_SECRET: string; ZOOM_VERIFICATION_TOKEN: string; JOB_KV: KVNamespace },
+    env: {
+      ZOOM_API_KEY: string;
+      ZOOM_API_SECRET: string;
+      ZOOM_VERIFICATION_TOKEN: string;
+      JOB_KV: KVNamespace;
+    },
     request: ProcessTranscriptRequest
   ): Promise<{ success: boolean; jobId: string; message: string }> => {
     const { jobId } = request;
@@ -151,7 +173,7 @@ export const startTranscriptProcessing = asyncErrorHandler(
 
     // 処理を非同期で開始（後でWorkerの処理時間制限に注意）
     // 実際のシステムでは、この部分はワーカーに処理を渡すか、Queueを利用する
-    void processTranscript(env, jobId).catch(err => {
+    void processTranscript(env, jobId).catch((err) => {
       console.error(`ジョブ ${jobId} の非同期処理中にエラー:`, err);
     });
 
@@ -170,11 +192,10 @@ export const startTranscriptProcessing = asyncErrorHandler(
  * @returns 構造化された文字起こしデータ（存在しない場合はnull）
  */
 export const getTranscriptByJobId = asyncErrorHandler(
-  async (
-    env: { JOB_KV: KVNamespace },
-    jobId: string
-  ): Promise<StructuredTranscript | null> => {
-    const jobStorage = await import('../../lib/storage/kv').then(m => m.createJobStorage(env.JOB_KV));
+  async (env: { JOB_KV: KVNamespace }, jobId: string): Promise<StructuredTranscript | null> => {
+    const jobStorage = await import('../../lib/storage/kv').then((m) =>
+      m.createJobStorage(env.JOB_KV)
+    );
 
     // KVから文字起こしデータを取得
     const transcriptJson = await jobStorage.getTranscript(jobId);

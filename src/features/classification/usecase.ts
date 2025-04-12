@@ -2,22 +2,19 @@
  * 会議分類機能のユースケース
  * @module ClassificationUsecase
  */
-import { createGeminiClient } from "../../lib/gemini";
-import { asyncErrorHandler } from "../../utils/error";
-import { JobData, JobStatus, MeetingCategory } from "../job/domain";
-import { getTranscriptByJobId } from "../transcript/usecase";
-import { getRawJobData, updateJob } from "../job/usecase";
+import { createGeminiClient } from '../../lib/gemini';
+import { asyncErrorHandler } from '../../utils/error';
+import { JobData, JobStatus, MeetingCategory } from '../job/domain';
+import { getRawJobData, updateJob } from '../job/usecase';
+import { getTranscriptByJobId } from '../transcript/usecase';
 import {
-  ClassificationOptions,
-  ClassificationResult,
-  ClassifyMeetingRequest,
+  type ClassificationOptions,
+  type ClassificationResult,
+  type ClassifyMeetingRequest,
   parseMeetingCategory,
   shouldProcessMeeting,
-} from "./domain";
-import {
-  generateClassifyMeetingPrompt,
-  prepareTextSample
-} from "./prompts";
+} from './domain';
+import { generateClassifyMeetingPrompt, prepareTextSample } from './prompts';
 
 /**
  * 会議テキストを分類する
@@ -41,7 +38,7 @@ export const classifyText = asyncErrorHandler(
     // プロンプト生成
     const prompt = generateClassifyMeetingPrompt(sampleText);
 
-    console.log("会議分類を実行中...");
+    console.log('会議分類を実行中...');
 
     try {
       // AIによる分類実行
@@ -62,11 +59,11 @@ export const classifyText = asyncErrorHandler(
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error("会議分類中にエラーが発生しました:", error);
+      console.error('会議分類中にエラーが発生しました:', error);
       // エラー時はその他カテゴリとして処理
       return {
         category: MeetingCategory.OTHER,
-        reason: "分類処理中にエラーが発生したためその他カテゴリとしました",
+        reason: '分類処理中にエラーが発生したためその他カテゴリとしました',
         timestamp: new Date().toISOString(),
       };
     }
@@ -137,7 +134,7 @@ export const classifyMeetingForJob = asyncErrorHandler(
 
       const result: ClassificationResult = {
         category: jobData.category as MeetingCategory,
-        reason: jobData.reason || "既存の分類結果を使用",
+        reason: jobData.reason || '既存の分類結果を使用',
         timestamp: jobData.processingStartedAt || new Date().toISOString(),
       };
 
@@ -156,7 +153,7 @@ export const classifyMeetingForJob = asyncErrorHandler(
       reason: result.reason,
       status: shouldProcessMeeting(result.category)
         ? JobStatus.PROCESSING // 処理を続行する場合
-        : JobStatus.SKIPPED,   // 処理をスキップする場合
+        : JobStatus.SKIPPED, // 処理をスキップする場合
     });
 
     // 処理続行の判断

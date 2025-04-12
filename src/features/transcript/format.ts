@@ -1,9 +1,14 @@
+import { asyncErrorHandler } from '../../utils/error';
 /**
  * VTT形式の文字起こしデータを構造化テキストに変換する機能
  * @module TranscriptFormat
  */
-import { TranscriptEntry, StructuredTranscript, TranscriptMetadata, VttParseOptions } from './domain';
-import { asyncErrorHandler } from '../../utils/error';
+import type {
+  StructuredTranscript,
+  TranscriptEntry,
+  TranscriptMetadata,
+  VttParseOptions,
+} from './domain';
 
 /**
  * VTTのタイムスタンプを秒数に変換
@@ -16,14 +21,14 @@ export function timeToSeconds(timestamp: string): number {
 
   // 時間の部分
   if (parts.length >= 3) {
-    seconds += parseInt(parts[0], 10) * 3600; // 時間を秒に
-    seconds += parseInt(parts[1], 10) * 60;   // 分を秒に
-    seconds += parseFloat(parts[2]);          // 秒とミリ秒
+    seconds += Number.parseInt(parts[0], 10) * 3600; // 時間を秒に
+    seconds += Number.parseInt(parts[1], 10) * 60; // 分を秒に
+    seconds += Number.parseFloat(parts[2]); // 秒とミリ秒
   }
   // MM:SS.mmm形式の場合
   else if (parts.length === 2) {
-    seconds += parseInt(parts[0], 10) * 60;   // 分を秒に
-    seconds += parseFloat(parts[1]);          // 秒とミリ秒
+    seconds += Number.parseInt(parts[0], 10) * 60; // 分を秒に
+    seconds += Number.parseFloat(parts[1]); // 秒とミリ秒
   }
 
   return seconds;
@@ -70,7 +75,7 @@ export function extractSpeaker(line: string): string {
  * @param removeSpeaker 話者部分を除去するかどうか
  * @returns クリーンなテキスト
  */
-export function extractCleanText(line: string, removeSpeaker: boolean = true): string {
+export function extractCleanText(line: string, removeSpeaker = true): string {
   // HTMLタグを除去
   let cleanText = line.replace(/<[^>]*>/g, '');
 
@@ -174,7 +179,7 @@ export const parseVttTranscript = asyncErrorHandler(
     metadata.speakers = Array.from(speakerSet);
 
     // すべてのテキストを結合
-    const rawText = cleanedEntries.map(entry => entry.text).join('\n');
+    const rawText = cleanedEntries.map((entry) => entry.text).join('\n');
 
     return {
       metadata,
@@ -253,7 +258,7 @@ function removeFillerWords(entries: TranscriptEntry[]): TranscriptEntry[] {
     /\bというか(?:\s|$|\b)/g,
   ];
 
-  return entries.map(entry => {
+  return entries.map((entry) => {
     let cleanedText = entry.text;
 
     // フィラーワードを除去
@@ -286,14 +291,14 @@ export function transcriptToMarkdown(transcript: StructuredTranscript): string {
 
   markdown += '## 参加者\n\n';
   const speakers = transcript.metadata.speakers || [];
-  speakers.forEach(speaker => {
+  speakers.forEach((speaker) => {
     markdown += `- ${speaker}\n`;
   });
 
   markdown += '\n## 会話内容\n\n';
 
   // 発言内容
-  transcript.entries.forEach(entry => {
+  transcript.entries.forEach((entry) => {
     const timeStr = entry.startTime.split('.')[0]; // ミリ秒部分を除去
     const speaker = entry.speaker ? `**${entry.speaker}**` : '匿名';
 

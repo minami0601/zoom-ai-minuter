@@ -2,8 +2,8 @@
  * Notionページ用テンプレート
  * @module NotionTemplates
  */
-import { MinutesData } from '../summarization/domain';
-import { ActionItem } from '../summarization/domain';
+import type { MinutesData } from '../summarization/domain';
+import type { ActionItem } from '../summarization/domain';
 import { NotionPageSection } from './domain';
 
 /**
@@ -100,9 +100,8 @@ export function generateOverviewSection(minutes: MinutesData): string {
   const { meetingTitle, meetingDate, meetingCategory, meetingDuration, participants } = minutes;
 
   const formattedDuration = `${Math.floor(meetingDuration / 60)}時間${meetingDuration % 60}分`;
-  const participantsList = participants.length > 0
-    ? participants.map(p => `- ${p}`).join('\n')
-    : '- 参加者情報なし';
+  const participantsList =
+    participants.length > 0 ? participants.map((p) => `- ${p}`).join('\n') : '- 参加者情報なし';
 
   return `## 会議概要
 
@@ -139,9 +138,10 @@ ${globalSummary.summary}
 export function generateDecisionsSection(minutes: MinutesData): string {
   const { decisions } = minutes.globalSummary;
 
-  const decisionsContent = decisions.length > 0
-    ? decisions.map(decision => `- ${decision}`).join('\n')
-    : '特に決定事項はありませんでした。';
+  const decisionsContent =
+    decisions.length > 0
+      ? decisions.map((decision) => `- ${decision}`).join('\n')
+      : '特に決定事項はありませんでした。';
 
   return `## 決定事項
 
@@ -164,11 +164,10 @@ export function generateActionItemsSection(minutes: MinutesData): string {
     return priorityMap[a.priority || 'medium'] - priorityMap[b.priority || 'medium'];
   });
 
-  const actionItemsContent = sortedItems.length > 0
-    ? sortedItems
-        .map(formatActionItem)
-        .join('\n')
-    : '特にアクションアイテムはありませんでした。';
+  const actionItemsContent =
+    sortedItems.length > 0
+      ? sortedItems.map(formatActionItem).join('\n')
+      : '特にアクションアイテムはありませんでした。';
 
   return `## アクションアイテム
 
@@ -215,10 +214,7 @@ ${minutes.timeline.rawMarkdown}`;
  * @param section セクション名
  * @returns マークダウン形式のセクション
  */
-export function generateSection(
-  minutes: MinutesData,
-  section: NotionPageSection
-): string {
+export function generateSection(minutes: MinutesData, section: NotionPageSection): string {
   switch (section) {
     case NotionPageSection.OVERVIEW:
       return generateOverviewSection(minutes);
@@ -263,7 +259,7 @@ export function generateMinutesIntegrationPrompt(
 - タイトル: ${meetingData.title}
 - 日時: ${meetingData.date}
 - 所要時間: ${meetingData.duration}分
-- 参加者: ${meetingData.participants.join(", ")}
+- 参加者: ${meetingData.participants.join(', ')}
 
 ## 全体要約
 ${globalSummary}

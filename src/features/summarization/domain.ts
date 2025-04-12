@@ -2,8 +2,8 @@
  * 会議要約機能のドメインモデルと型定義
  * @module SummarizationDomain
  */
-import { MeetingCategory } from "../classification/domain";
-import { TranscriptEntry } from "../transcript/domain";
+import type { MeetingCategory } from '../classification/domain';
+import type { TranscriptEntry } from '../transcript/domain';
 
 /**
  * 要約リクエスト

@@ -8,15 +8,12 @@ import { JobStatus } from '../job/domain';
 import { updateJob } from '../job/usecase';
 import {
   CATEGORY_EMOJI_MAP,
-  NotionOutputConfig,
-  NotionOutputRequest,
-  NotionOutputResult,
+  type NotionOutputConfig,
+  type NotionOutputRequest,
+  type NotionOutputResult,
   mapMinutesToNotionProperties,
 } from './domain';
-import {
-  generateFullMinutesMarkdown,
-  markdownToNotionBlocks,
-} from './templates';
+import { generateFullMinutesMarkdown, markdownToNotionBlocks } from './templates';
 
 /**
  * 議事録をNotionデータベースに出力する
@@ -159,15 +156,11 @@ export const createNotionMinutes = asyncErrorHandler(
  * @returns 更新成功フラグ
  */
 export const updateNotionMinutes = asyncErrorHandler(
-  async (
-    env: { NOTION_API_KEY: string },
-    pageId: string,
-    minutes: any
-  ): Promise<boolean> => {
+  async (env: { NOTION_API_KEY: string }, pageId: string, minutes: any): Promise<boolean> => {
     try {
       const notionClient = createNotionClient({
         NOTION_API_KEY: env.NOTION_API_KEY,
-        NOTION_DATABASE_ID: '',  // ページ更新時は不要
+        NOTION_DATABASE_ID: '', // ページ更新時は不要
       });
 
       // プロパティとマークダウンを生成

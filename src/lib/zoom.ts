@@ -2,7 +2,7 @@
  * Zoom API連携機能を提供します
  * @module ZoomLib
  */
-import { asyncErrorHandler } from "../utils/error";
+import { asyncErrorHandler } from '../utils/error';
 
 /**
  * Zoom API設定インターフェース
@@ -99,24 +99,26 @@ export class ZoomClient {
     requestBody: ArrayBuffer
   ): Promise<boolean> {
     try {
-      const message = timestamp + "." + new TextDecoder().decode(requestBody);
+      const message = timestamp + '.' + new TextDecoder().decode(requestBody);
       const key = await crypto.subtle.importKey(
-        "raw",
+        'raw',
         new TextEncoder().encode(this.config.verificationToken),
-        { name: "HMAC", hash: "SHA-256" },
+        { name: 'HMAC', hash: 'SHA-256' },
         false,
-        ["sign", "verify"]
+        ['sign', 'verify']
       );
 
       const msgBuffer = new TextEncoder().encode(message);
-      const signatureBuffer = await crypto.subtle.sign("HMAC", key, msgBuffer);
-      const computedSignature = "v0=" + Array.from(new Uint8Array(signatureBuffer))
-        .map(b => b.toString(16).padStart(2, "0"))
-        .join("");
+      const signatureBuffer = await crypto.subtle.sign('HMAC', key, msgBuffer);
+      const computedSignature =
+        'v0=' +
+        Array.from(new Uint8Array(signatureBuffer))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
 
       return signature === computedSignature;
     } catch (error) {
-      console.error("Webhook verification error:", error);
+      console.error('Webhook verification error:', error);
       return false;
     }
   }
@@ -130,11 +132,11 @@ export class ZoomClient {
   downloadTranscript = asyncErrorHandler(
     async (downloadUrl: string, downloadToken: string): Promise<string> => {
       const url = new URL(downloadUrl);
-      url.searchParams.append("access_token", downloadToken);
+      url.searchParams.append('access_token', downloadToken);
 
       const response = await fetch(url.toString(), {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
@@ -153,16 +155,13 @@ export class ZoomClient {
    * @returns 文字起こしファイル情報
    */
   getTranscriptFileInfo = asyncErrorHandler(
-    async (
-      meetingUUID: string,
-      downloadToken: string
-    ): Promise<TranscriptFileInfo | null> => {
+    async (meetingUUID: string, downloadToken: string): Promise<TranscriptFileInfo | null> => {
       // Zoom API から録画一覧を取得
       const url = `https://api.zoom.us/v2/meetings/${meetingUUID}/recordings`;
       const response = await fetch(url, {
         headers: {
-          "Authorization": `Bearer ${downloadToken}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${downloadToken}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -170,12 +169,10 @@ export class ZoomClient {
         throw new Error(`Failed to get recording info: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json() as ZoomRecordingsResponse;
+      const data = (await response.json()) as ZoomRecordingsResponse;
 
       // VTTファイルを探す
-      const transcriptFile = data.recording_files?.find(
-        (file) => file.file_type === "TRANSCRIPT"
-      );
+      const transcriptFile = data.recording_files?.find((file) => file.file_type === 'TRANSCRIPT');
 
       if (!transcriptFile) {
         return null;

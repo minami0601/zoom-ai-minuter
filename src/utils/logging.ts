@@ -99,11 +99,7 @@ function formatLogEntry(
  * @param message ログメッセージ
  * @param context 追加のコンテキスト情報
  */
-export function log(
-  level: LogLevel,
-  message: string,
-  context?: Record<string, any>
-): void {
+export function log(level: LogLevel, message: string, context?: Record<string, any>): void {
   if (level < currentConfig.minLevel) {
     return;
   }

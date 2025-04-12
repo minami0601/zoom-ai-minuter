@@ -2,9 +2,9 @@
  * Zoom Webhook APIエンドポイント
  * @module WebhookRoutes
  */
-import { Hono } from "hono";
-import { handleZoomWebhook } from "../features/webhook/usecase";
-import { WebhookVerificationRequest } from "../features/webhook/domain";
+import { Hono } from 'hono';
+import type { WebhookVerificationRequest } from '../features/webhook/domain';
+import { handleZoomWebhook } from '../features/webhook/usecase';
 
 // 環境変数の型定義
 interface Env {
@@ -18,11 +18,11 @@ interface Env {
 const app = new Hono<{ Bindings: Env }>();
 
 // Zoom Webhook受信エンドポイント
-app.post("/zoom-webhook", async (c) => {
+app.post('/zoom-webhook', async (c) => {
   try {
     // リクエストヘッダーから署名と時刻を取得
-    const signature = c.req.header("x-zm-signature") || "";
-    const timestamp = c.req.header("x-zm-request-timestamp") || "";
+    const signature = c.req.header('x-zm-signature') || '';
+    const timestamp = c.req.header('x-zm-request-timestamp') || '';
 
     // リクエストボディを取得（ArrayBuffer形式）
     const payload = await c.req.arrayBuffer();
@@ -31,18 +31,18 @@ app.post("/zoom-webhook", async (c) => {
     const payloadText = new TextDecoder().decode(payload);
 
     // 安全にJSONをパース
-    let eventType = "不明";
+    let eventType = '不明';
     try {
       const jsonData = JSON.parse(payloadText);
-      eventType = jsonData.event || "イベント情報なし";
+      eventType = jsonData.event || 'イベント情報なし';
     } catch (jsonError) {
-      console.warn("Webhookペイロードの解析に失敗しました:", jsonError);
-      eventType = "無効なJSON形式";
+      console.warn('Webhookペイロードの解析に失敗しました:', jsonError);
+      eventType = '無効なJSON形式';
     }
 
     // ログ出力
-    console.log("Zoom Webhook受信:", {
-      signature: signature.substring(0, 10) + "...",
+    console.log('Zoom Webhook受信:', {
+      signature: signature.substring(0, 10) + '...',
       timestamp,
       event: eventType,
     });
@@ -65,13 +65,16 @@ app.post("/zoom-webhook", async (c) => {
     }
   } catch (error) {
     // エラー発生時の処理
-    console.error("Webhook処理エラー:", error);
+    console.error('Webhook処理エラー:', error);
 
-    return c.json({
-      success: false,
-      message: "Webhookの処理中にエラーが発生しました",
-      error: error instanceof Error ? error.message : "不明なエラー",
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        message: 'Webhookの処理中にエラーが発生しました',
+        error: error instanceof Error ? error.message : '不明なエラー',
+      },
+      500
+    );
   }
 });
 

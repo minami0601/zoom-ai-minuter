@@ -3,21 +3,21 @@
  * @module SummarizationUsecase
  */
 import { createGeminiClient } from '../../lib/gemini';
-import { JobStatus } from '../job/domain';
 import { asyncErrorHandler } from '../../utils/error';
-import { updateJob, getRawJobData } from '../job/usecase';
+import { JobStatus } from '../job/domain';
+import { getRawJobData, updateJob } from '../job/usecase';
 import { getTranscriptByJobId } from '../transcript/usecase';
 import {
   AI_MODEL_LIMITS,
   DEFAULT_SUMMARIZATION_OPTIONS,
-  GlobalSummary,
-  MeetingTimeline,
-  MeetingTopic,
-  MinutesData,
-  SummarizationOptions,
-  SummarizationResult,
-  SummarizeRequest,
-  TextChunk,
+  type GlobalSummary,
+  type MeetingTimeline,
+  type MeetingTopic,
+  type MinutesData,
+  type SummarizationOptions,
+  type SummarizationResult,
+  type SummarizeRequest,
+  type TextChunk,
 } from './domain';
 import {
   generateActionItemExtractionPrompt,
@@ -95,14 +95,15 @@ export const generateGlobalSummary = asyncErrorHandler(
     const geminiClient = createGeminiClient(env);
 
     // 全体のテキストが長すぎる場合は分割する（先頭部分のみ）
-    const textToSummarize = fullText.length > AI_MODEL_LIMITS.maxInputTokens / 2
-      ? fullText.substring(0, AI_MODEL_LIMITS.maxInputTokens / 2) + "\n...(以下省略)..."
-      : fullText;
+    const textToSummarize =
+      fullText.length > AI_MODEL_LIMITS.maxInputTokens / 2
+        ? fullText.substring(0, AI_MODEL_LIMITS.maxInputTokens / 2) + '\n...(以下省略)...'
+        : fullText;
 
     // 全体要約プロンプトを生成
     const prompt = generateGlobalSummaryPrompt(textToSummarize, meetingDate, meetingTopic);
 
-    console.log("全体要約を生成中...");
+    console.log('全体要約を生成中...');
 
     // AIによる要約生成
     const summaryMarkdown = await geminiClient.generateText(prompt, {
@@ -167,11 +168,13 @@ export const analyzeAllTopics = asyncErrorHandler(
     for (let i = 0; i < chunks.length; i += maxConcurrent) {
       const batch = chunks.slice(i, i + maxConcurrent);
       const batchResults = await Promise.all(
-        batch.map(chunk => analyzeTopicFromChunk(env, chunk, options))
+        batch.map((chunk) => analyzeTopicFromChunk(env, chunk, options))
       );
 
       topics.push(...batchResults);
-      console.log(`トピック分析進捗: ${Math.min(i + maxConcurrent, chunks.length)}/${chunks.length}`);
+      console.log(
+        `トピック分析進捗: ${Math.min(i + maxConcurrent, chunks.length)}/${chunks.length}`
+      );
     }
 
     return topics;
@@ -200,7 +203,7 @@ export const generateTimelineFromTopics = asyncErrorHandler(
       return a.id - b.id;
     });
 
-    console.log("タイムラインを生成中...");
+    console.log('タイムラインを生成中...');
 
     // タイムライン統合プロンプトを生成
     const prompt = generateTimelineIntegrationPrompt(sortedTopics);
@@ -265,9 +268,9 @@ export const extractDecisions = asyncErrorHandler(
     // テキストを行に分割して配列に変換
     const decisions = decisionsText
       .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.startsWith('- ') || line.startsWith('* '))
-      .map(line => line.substring(2).trim());
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('- ') || line.startsWith('* '))
+      .map((line) => line.substring(2).trim());
 
     // 「明確な決定事項はありません」などの場合は空配列を返す
     if (decisions.length === 1 && decisions[0].includes('決定事項はありません')) {
@@ -318,8 +321,8 @@ export const parseGlobalSummary = (summaryMarkdown: string): GlobalSummary => {
   const participantsText = participantsMatch ? participantsMatch[1].trim() : '不明';
   const participants = participantsText
     .split(',')
-    .map(p => p.trim())
-    .filter(p => p && p !== '不明');
+    .map((p) => p.trim())
+    .filter((p) => p && p !== '不明');
 
   // 日時を抽出
   const dateMatch = summaryMarkdown.match(/日時:([^\n]+)/);
@@ -333,9 +336,9 @@ export const parseGlobalSummary = (summaryMarkdown: string): GlobalSummary => {
   const decisionsSection = summaryMarkdown.split(/^## 決まったこと/m)[1]?.split(/^##/m)[0] || '';
   const decisions = decisionsSection
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.startsWith('- ') || line.startsWith('* '))
-    .map(line => line.substring(2).trim());
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('- ') || line.startsWith('* '))
+    .map((line) => line.substring(2).trim());
 
   // サマリーを抽出
   const summarySection = summaryMarkdown.split(/^## サマリ/m)[1]?.split(/^##/m)[0] || '';
@@ -345,25 +348,29 @@ export const parseGlobalSummary = (summaryMarkdown: string): GlobalSummary => {
   const actionSection = summaryMarkdown.split(/^## ネクストアクション/m)[1]?.split(/^##/m)[0] || '';
   const actionItems = actionSection
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.startsWith('- ') || line.startsWith('* '))
-    .map(line => {
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('- ') || line.startsWith('* '))
+    .map((line) => {
       const actionText = line.substring(2).trim();
       const assigneeMatch = actionText.match(/\[(.*?)\]/);
       const assignee = assigneeMatch ? assigneeMatch[1] : undefined;
 
       // priority の型を明示的にリテラル型に制限する
-      let priority: "high" | "medium" | "low" = "medium"; // デフォルト値
+      let priority: 'high' | 'medium' | 'low' = 'medium'; // デフォルト値
 
-      if (actionText.toLowerCase().includes('高') ||
-          actionText.toLowerCase().includes('重要') ||
-          actionText.toLowerCase().includes('urgent') ||
-          actionText.toLowerCase().includes('high')) {
-        priority = "high";
-      } else if (actionText.toLowerCase().includes('低') ||
-                actionText.toLowerCase().includes('minor') ||
-                actionText.toLowerCase().includes('low')) {
-        priority = "low";
+      if (
+        actionText.toLowerCase().includes('高') ||
+        actionText.toLowerCase().includes('重要') ||
+        actionText.toLowerCase().includes('urgent') ||
+        actionText.toLowerCase().includes('high')
+      ) {
+        priority = 'high';
+      } else if (
+        actionText.toLowerCase().includes('低') ||
+        actionText.toLowerCase().includes('minor') ||
+        actionText.toLowerCase().includes('low')
+      ) {
+        priority = 'low';
       }
 
       return {
@@ -425,7 +432,7 @@ export const generateMinutes = asyncErrorHandler(
 
     // 3. 全体要約から構造化データを抽出
     const globalSummary = parseGlobalSummary(globalSummaryMarkdown);
-    console.log("全体要約を生成しました");
+    console.log('全体要約を生成しました');
 
     // 4. 各チャンクのトピック分析
     const topics = await analyzeAllTopics(env, chunks, opts);
@@ -433,12 +440,12 @@ export const generateMinutes = asyncErrorHandler(
 
     // 5. トピックからタイムラインを生成
     const timeline = await generateTimelineFromTopics(env, topics);
-    console.log("タイムラインを生成しました");
+    console.log('タイムラインを生成しました');
 
     // 6. 話者リストを収集
     const allSpeakers = new Set<string>();
-    topics.forEach(topic => {
-      topic.speakers.forEach(speaker => {
+    topics.forEach((topic) => {
+      topic.speakers.forEach((speaker) => {
         if (speaker && speaker !== '不明') {
           allSpeakers.add(speaker);
         }
@@ -446,7 +453,7 @@ export const generateMinutes = asyncErrorHandler(
     });
 
     // グローバル要約から検出した参加者も追加
-    globalSummary.participants.forEach(participant => {
+    globalSummary.participants.forEach((participant) => {
       if (participant && participant !== '不明') {
         allSpeakers.add(participant);
       }
@@ -506,10 +513,12 @@ export const summarizeJobTranscript = asyncErrorHandler(
       // テキストが指定されていない場合は文字起こしデータから取得
       if (!text) {
         if (transcriptEntries) {
-          text = transcriptEntries.map(entry => {
-            const speaker = entry.speaker ? `${entry.speaker}: ` : '';
-            return `${speaker}${entry.text}`;
-          }).join('\n');
+          text = transcriptEntries
+            .map((entry) => {
+              const speaker = entry.speaker ? `${entry.speaker}: ` : '';
+              return `${speaker}${entry.text}`;
+            })
+            .join('\n');
         } else {
           // 文字起こしデータを取得
           const transcript = await getTranscriptByJobId(env, jobId);
@@ -542,7 +551,6 @@ export const summarizeJobTranscript = asyncErrorHandler(
         minutes,
         processingTimeMs: Date.now() - startTime,
       };
-
     } catch (error) {
       console.error(`ジョブ ${jobId}: 議事録生成中にエラーが発生しました`, error);
 
@@ -599,7 +607,7 @@ export const startSummarization = asyncErrorHandler(
 
     // 処理を非同期で開始（後でWorkerの処理時間制限に注意）
     // 実際のシステムでは、この部分はワーカーに処理を渡すか、Queueを利用する
-    void summarizeJobTranscript(env, request).catch(err => {
+    void summarizeJobTranscript(env, request).catch((err) => {
       console.error(`ジョブ ${jobId} の非同期処理中にエラー:`, err);
     });
 
