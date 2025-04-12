@@ -30,11 +30,21 @@ app.post("/zoom-webhook", async (c) => {
     // リクエストボディをテキストに変換
     const payloadText = new TextDecoder().decode(payload);
 
+    // 安全にJSONをパース
+    let eventType = "不明";
+    try {
+      const jsonData = JSON.parse(payloadText);
+      eventType = jsonData.event || "イベント情報なし";
+    } catch (jsonError) {
+      console.warn("Webhookペイロードの解析に失敗しました:", jsonError);
+      eventType = "無効なJSON形式";
+    }
+
     // ログ出力
     console.log("Zoom Webhook受信:", {
       signature: signature.substring(0, 10) + "...",
       timestamp,
-      event: JSON.parse(payloadText).event,
+      event: eventType,
     });
 
     // 検証用リクエストオブジェクト作成
