@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@notionhq/client": "^2.3.0",
     "date-fns": "^4.1.0",
     "hono": "^4.7.6",
     "remeda": "^2.21.2",
