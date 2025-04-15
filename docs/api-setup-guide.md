@@ -21,23 +21,32 @@
 
 1. ログイン後、「Build App」ボタンをクリックします
 2. 「Server-to-Server OAuth」アプリケーションタイプを選択します
+   - このアプリタイプは、サーバーからZoom APIに直接アクセスするために使用します
+   - ユーザー認証が不要でバックグラウンド処理に最適です
 3. アプリ名を入力し（例: "Zoom AI Minuter"）、「Create」をクリックします
 
-### 3. 認証情報の取得
+### 3. API Key と API Secret の取得
 
-1. 作成したアプリのページで「App Credentials」セクションを見つけます
-2. 以下の情報をメモします：
-   - **Client ID** (これが `ZOOM_API_KEY` になります)
-   - **Client Secret** (これが `ZOOM_API_SECRET` になります)
+1. アプリケーション作成後、「App Credentials」セクションに移動します
+2. このセクションに表示される以下の情報をメモします：
+   - **Client ID**: これが `.env` ファイルの `ZOOM_API_KEY` として使用します
+   - **Client Secret**: これが `.env` ファイルの `ZOOM_API_SECRET` として使用します
+   - これらの認証情報は再表示されないため、安全な場所に保管してください
 
 ### 4. スコープの設定
 
 1. 左側メニューから「Scopes」を選択します
 2. 以下のスコープを追加します：
-   - `recording:read`
-   - `recording:write`
+   - `recording:read` - 録画情報の取得に必要
+   - `recording:write` - 必要に応じて（録画操作を行う場合）
 
-### 5. Webhook の設定
+### 5. アクティベーションとインストール
+
+1. 左側メニューから「Activation」を選択します
+2. 「Activate your app」ボタンをクリックして、アプリケーションを有効化します
+3. これにより、APIキーとシークレットが使用可能になります
+
+### 6. Webhook の設定（文字起こし通知を受け取るために必要）
 
 1. 左側メニューから「Feature」を選択し、「Event Subscriptions」を選択します
 2. 「Add Event Subscription」をクリックします
@@ -45,11 +54,6 @@
 4. 「Event Types」セクションで、`Recording Transcript Completed` を選択します
 5. 「Verification Token」をメモします (これが `ZOOM_VERIFICATION_TOKEN` になります)
 6. 「Save」をクリックします
-
-### 6. アプリケーションの有効化
-
-1. 左側メニューから「Activation」を選択します
-2. 「Activate your app」をクリックして、アプリケーションを有効化します
 
 ## Notion API 設定
 
