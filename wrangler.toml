@@ -9,8 +9,8 @@ APP_ENV = "development"
 # KVストレージ名前空間の設定
 [[kv_namespaces]]
 binding = "JOB_KV"
-id = "xxxxxxxx" # このIDはCloudflare KV作成時に取得する値
-preview_id = "yyyyyyyy" # ローカル開発用のID
+id = "f73683bf19de4eeeb67e0b6e2413c9a9" # このIDはCloudflare KV作成時に取得する値
+preview_id = "f73683bf19de4eeeb67e0b6e2413c9a9" # ローカル開発用のID
 
 # 開発環境設定
 [env.development]
